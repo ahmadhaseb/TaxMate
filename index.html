@@ -761,7 +761,8 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ query: message })
+					mode: "cors",
+                    body: JSON.stringify({ message : userMessage })
                 });
 				
 
