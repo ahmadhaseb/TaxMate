@@ -762,7 +762,7 @@
                         'Content-Type': 'application/json',
                     },
 					mode: "cors",
-                    body: JSON.stringify({ message : userMessage })
+                    body: JSON.stringify({ query:message})
                 });
 				
 
@@ -820,14 +820,6 @@
 
             lastScroll = currentScroll;
         });
-   </script>
-	<link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
-	<script type="module">
-	import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-
-	createChat({
-		webhookUrl: 'https://ana-sobriquetical-numinously.ngrok-free.dev/webhook-test/website-chatbot'
-	});
-	</script>
+  
 </body>
 </html>
