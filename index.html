@@ -783,11 +783,11 @@
             }
 
             // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
-            const data = await response.json();
+            const data = await json.response
             hideTyping();
 
             // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
-            const botReply = data.reply ||json.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+            const botReply = data.reply ||data.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
             addChatMessage(botReply, false);
 
         } catch (error) {
