@@ -783,7 +783,7 @@
             }
 
             // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
-            const data = await json.response
+            const data = await json.response();
             hideTyping();
 
             // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
