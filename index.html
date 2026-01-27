@@ -693,7 +693,7 @@
 
     // Webhook URL (آپ نے جو ngrok URL استعمال کیا ہے)
     // نوٹ: اگر آپ نے پروڈکشن URL لگایا ہے تو اسے یہاں اپ ڈیٹ کریں
-    const WEBHOOK_URL = 'https://shiningstarplay321.app.n8n.cloud/webhook/fcfeee50-f112-474c-9176-ff392d93a8a6';
+    const WEBHOOK_URL = 'https://shiningstarplay321.app.n8n.cloud/webhook-test/fcfeee50-f112-474c-9176-ff392d93a8a6';
 
     function addChatMessage(text, isUser) {
         const messageDiv = document.createElement('div');
@@ -763,7 +763,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ chatMessage:message })
+                body: JSON.stringify({ query:message })
             });
 
             // 2. نیٹ ورک ایرر ہینڈل کریں (4xx یا 5xx سٹیٹس کوڈ)
