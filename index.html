@@ -89,49 +89,104 @@ function addMessage(text, type){
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-async function sendChatMessage(){
+// async function sendChatMessage(){
+//     const message = chatInput.value.trim();
+//     if(!message) return;
+
+//     addMessage(message,"user");
+//     chatInput.value="";
+//     sendBtn.disabled=true;
+
+//     try{
+//         const res = await fetch(WEBHOOK_URL,{
+//             method:"POST",
+//             headers:{ "Content-Type":"application/json" },
+//             body:JSON.stringify({ query:message })
+//         });
+
+//         if(!res.ok) throw new Error("Server Error");
+
+//         const raw = await res.text();
+
+//         if(!raw){
+//             addMessage("آپ کا سوال موصول ہو گیا ہے، براہِ کرم انتظار کریں۔","bot");
+//             return;
+//         }
+
+//         let data;
+//         try{
+//             data = JSON.parse(raw);
+//         }catch{
+//             addMessage(raw,"bot");
+//             return;
+//         }
+
+//         const reply = data.reply || data.response || data.answer || data.text || "جواب دستیاب نہیں۔";
+//         addMessage(reply,"bot");
+
+//     }catch(err){
+//         console.error(err);
+//         addMessage("سروس دستیاب نہیں، دوبارہ کوشش کریں۔","bot");
+//     }finally{
+//         sendBtn.disabled=false;
+//         chatInput.focus();
+//     }
+// }
+    async function sendChatMessage() {
     const message = chatInput.value.trim();
-    if(!message) return;
+    if (!message) return;
 
-    addMessage(message,"user");
-    chatInput.value="";
-    sendBtn.disabled=true;
+    addChatMessage(message, true);
+    chatInput.value = '';
+    sendBtn.disabled = true;
 
-    try{
-        const res = await fetch(WEBHOOK_URL,{
-            method:"POST",
-            headers:{ "Content-Type":"application/json" },
-            body:JSON.stringify({ query:message })
+    try {
+        const response = await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: message })
         });
 
-        if(!res.ok) throw new Error("Server Error");
+        // 👇 read as TEXT first (CRITICAL)
+        const text = await response.text();
 
-        const raw = await res.text();
-
-        if(!raw){
-            addMessage("آپ کا سوال موصول ہو گیا ہے، براہِ کرم انتظار کریں۔","bot");
+        if (!text) {
+            addChatMessage(
+                "Server responded but no data was returned. Check n8n Webhook Response node.",
+                false
+            );
             return;
         }
 
         let data;
-        try{
-            data = JSON.parse(raw);
-        }catch{
-            addMessage(raw,"bot");
+        try {
+            data = JSON.parse(text);
+        } catch {
+            // not JSON → show raw text
+            addChatMessage(text, false);
             return;
         }
 
-        const reply = data.reply || data.response || data.answer || data.text || "جواب دستیاب نہیں۔";
-        addMessage(reply,"bot");
+        const reply =
+            data.reply ||
+            data.response ||
+            data.answer ||
+            data.text ||
+            "No reply field found in response.";
 
-    }catch(err){
-        console.error(err);
-        addMessage("سروس دستیاب نہیں، دوبارہ کوشش کریں۔","bot");
-    }finally{
-        sendBtn.disabled=false;
-        chatInput.focus();
+        addChatMessage(reply, false);
+
+    } catch (err) {
+        console.error("Fetch error:", err);
+        addChatMessage(
+            "Unable to reach server. Please try again later.",
+            false
+        );
+    } finally {
+        sendBtn.disabled = false;
     }
 }
+
 
 sendBtn.onclick = sendChatMessage;
 chatInput.addEventListener("keypress",e=>{
