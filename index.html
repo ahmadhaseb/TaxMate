@@ -755,55 +755,54 @@
         sendBtn.disabled = true;
 
         showTyping();
-        try {
-    // 1. Request bhejna
-    const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
+        try
+        {
+            // 1. Request bhejna
+        const response = await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: message })
-    });
+            },
+            body: JSON.stringify({ query: message })
+        });
+             // 2. HTTP error handle
+        if (!response.ok) {
+            throw new Error(`Server responded with status: ${response.status}`);
+        }
+            // 3. Response ko JSON ke taur par read karo
+        const data = await response.json();
+        console.log("N8N Response:", data);
+        hideTyping();
 
-    // 2. HTTP error handle
-    if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-    }
+        // 4. Bot reply — sirf STRING allow
+        let botReply = '';
 
-    // 3. Response ko JSON ke taur par read karo
-    const data = await response.json();
-    console.log("N8N Response:", data);
-    hideTyping();
-
-    // 4. Bot reply — sirf STRING allow
-    let botReply = '';
-
-    if (typeof data.reply === 'string') {
+        if (typeof data.reply === 'string') {
         botReply = data.reply.trim();
-    } else if (typeof data.response === 'string') {
+        } else if (typeof data.response === 'string') {
         botReply = data.response.trim();
-    } else if (typeof data.text === 'string') {
+        } else if (typeof data.text === 'string') {
         botReply = data.text.trim();
-    } else if (typeof data.message === 'string') {
+        } else if (typeof data.message === 'string') {
         botReply = data.message.trim();
-    } else {
+        } else {
         botReply = 'Sorry، میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
-    }
+        }
+    
+        addChatMessage(botReply, false);
 
-    addChatMessage(botReply, false);
-
-} catch (error) {
-    hideTyping();
-    addChatMessage(
+     } catch (error) {
+        hideTyping();
+        addChatMessage(
         'سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔',
         false
-    );
-    console.error('Error in sendChatMessage:', error);
-} finally {
-    sendBtn.disabled = false;
-    chatInput.focus();
-}
-
+        );
+        console.error('Error in sendChatMessage:', error);
+    } finally {
+        sendBtn.disabled = false;
+        chatInput.focus();
+    }
+        
         // try {
         //     // 1. ریکوئسٹ بھیجیں
         //     const response = await fetch(WEBHOOK_URL, {
