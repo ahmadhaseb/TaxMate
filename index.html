@@ -784,6 +784,7 @@
 
             // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
             const data = await response.json();
+            console.log("N8N Response:", data); 
             hideTyping();
 
             // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
