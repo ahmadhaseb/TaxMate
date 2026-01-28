@@ -31,7 +31,7 @@
   <button id="send">Send</button>
 </div>
 
-<script>
+<!-- <script>
 const WEBHOOK_URL = "https://shiningstarplay321.app.n8n.cloud/webhook-test/15de7ef6-275e-42bf-a570-81067e2bb0f7";
 
 const messages = document.getElementById("messages");
@@ -81,7 +81,29 @@ sendBtn.onclick = async () => {
     addMessage("Bot: Server error", "bot");
   }
 };
+</script> -->
+  <script>
+async function test() {
+  try {
+    const res = await fetch("https://shiningstarplay321.app.n8n.cloud/webhook-test/15de7ef6-275e-42bf-a570-81067e2bb0f7",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: "hi" })
+      }
+    );
+
+    const text = await res.text();
+    alert("RAW RESPONSE:\n" + text);
+
+  } catch (e) {
+    alert("FETCH FAILED:\n" + e.message);
+  }
+}
+
+test();
 </script>
+
 
 </body>
 </html>
