@@ -761,7 +761,7 @@
             const response = await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/JSON',
                 },
                 body: JSON.stringify({ query: message })
             });
@@ -773,7 +773,7 @@
 
             // 3. JSON Error ہینڈل کریں (204 No Content یا خالی رسپانس)
             const contentType = response.headers.get("content-type");
-            const isJson = contentType && contentType.includes("application/json");
+            const isJson = contentType && contentType.includes("application/JSON");
 
             if (response.status === 204 || (response.status === 200 && !isJson)) {
                 hideTyping();
@@ -783,11 +783,11 @@
             }
 
             // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
-            const data = await response.json();
+            const data = await response.JSON();
             hideTyping();
 
             // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
-            const botReply = data.reply ||json.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+            const botReply = data.reply ||JSON.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
             addChatMessage(botReply, false);
 
         } catch (error) {
