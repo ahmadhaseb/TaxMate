@@ -755,50 +755,98 @@
         sendBtn.disabled = true;
 
         showTyping();
-
         try {
-            // 1. ریکوئسٹ بھیجیں
-            const response = await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/JSON',
-                },
-                body: JSON.stringify({ query: message })
-            });
+    // 1. Request bhejna
+    const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: message })
+    });
 
-            // 2. نیٹ ورک ایرر ہینڈل کریں (4xx یا 5xx سٹیٹس کوڈ)
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
+    // 2. HTTP error handle
+    if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+    }
 
-            // 3. JSON Error ہینڈل کریں (204 No Content یا خالی رسپانس)
-            const contentType = response.headers.get("content-type");
-            const isJson = contentType && contentType.includes("application/JSON");
+    // 3. Response ko JSON ke taur par read karo
+    const data = await response.json();
+    console.log("N8N Response:", data);
+    hideTyping();
 
-            if (response.status === 204 || (response.status === 200 && !isJson)) {
-                hideTyping();
-                // اگر n8n فوری رسپانس بھیج رہا ہے تو یہ پیغام دکھائیں
-                addChatMessage("آپ کا سوال موصول ہو گیا ہے اور اس پر کام جاری ہے۔", false);
-                return; // فنکشن یہیں ختم کر دیں
-            }
+    // 4. Bot reply — sirf STRING allow
+    let botReply = '';
 
-            // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
-            const data = await response.JSON();
-            hideTyping();
+    if (typeof data.reply === 'string') {
+        botReply = data.reply.trim();
+    } else if (typeof data.response === 'string') {
+        botReply = data.response.trim();
+    } else if (typeof data.text === 'string') {
+        botReply = data.text.trim();
+    } else if (typeof data.message === 'string') {
+        botReply = data.message.trim();
+    } else {
+        botReply = 'Sorry، میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+    }
 
-            // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
-            const botReply = data.reply ||JSON.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
-            addChatMessage(botReply, false);
+    addChatMessage(botReply, false);
 
-        } catch (error) {
-            hideTyping();
-            // عام ایرر میسج دکھائیں، لیکن console میں تفصیل دیں۔
-            addChatMessage('سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔', false);
-            console.error('Error in sendChatMessage:', error);
-        } finally {
-            sendBtn.disabled = false;
-            chatInput.focus();
-        }
+} catch (error) {
+    hideTyping();
+    addChatMessage(
+        'سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔',
+        false
+    );
+    console.error('Error in sendChatMessage:', error);
+} finally {
+    sendBtn.disabled = false;
+    chatInput.focus();
+}
+
+        // try {
+        //     // 1. ریکوئسٹ بھیجیں
+        //     const response = await fetch(WEBHOOK_URL, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/JSON',
+        //         },
+        //         body: JSON.stringify({ query: message })
+        //     });
+
+        //     // 2. نیٹ ورک ایرر ہینڈل کریں (4xx یا 5xx سٹیٹس کوڈ)
+        //     if (!response.ok) {
+        //         throw new Error(`Server responded with status: ${response.status}`);
+        //     }
+
+        //     // 3. JSON Error ہینڈل کریں (204 No Content یا خالی رسپانس)
+        //     const contentType = response.headers.get("content-type");
+        //     const isJson = contentType && contentType.includes("application/JSON");
+
+        //     if (response.status === 204 || (response.status === 200 && !isJson)) {
+        //         hideTyping();
+        //         // اگر n8n فوری رسپانس بھیج رہا ہے تو یہ پیغام دکھائیں
+        //         addChatMessage("آپ کا سوال موصول ہو گیا ہے اور اس پر کام جاری ہے۔", false);
+        //         return; // فنکشن یہیں ختم کر دیں
+        //     }
+
+        //     // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
+        //     const data = await response.JSON();
+        //     hideTyping();
+
+        //     // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
+        //     const botReply = data.reply ||JSON.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+        //     addChatMessage(botReply, false);
+
+        // } catch (error) {
+        //     hideTyping();
+        //     // عام ایرر میسج دکھائیں، لیکن console میں تفصیل دیں۔
+        //     addChatMessage('سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔', false);
+        //     console.error('Error in sendChatMessage:', error);
+        // } finally {
+        //     sendBtn.disabled = false;
+        //     chatInput.focus();
+        // }
     } // <--- یہاں `sendChatMessage` فنکشن صحیح طور پر بند ہو رہا ہے۔
 
     sendBtn.addEventListener('click', sendChatMessage);
