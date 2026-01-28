@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pakistan Tax Help Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="favicon.png">
-
     <style>
         /* Reset and Base Styles */
         * {
@@ -687,7 +685,7 @@
             }
         });
     });
-        console.log("🔥 NEW VERSION LOADED");
+ 
     // Chatbot Functionality
     const chatMessages = document.getElementById('chatMessages');
     const chatInput = document.getElementById('chatInput');
@@ -758,114 +756,50 @@
 
         showTyping();
 
-    //     try {
-    //         // 1. ریکوئسٹ بھیجیں
-    //         const response = await fetch(WEBHOOK_URL, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ query:"Hi" })
-    //         });
+        try {
+            // 1. ریکوئسٹ بھیجیں
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: message })
+            });
 
-    //         // 2. نیٹ ورک ایرر ہینڈل کریں (4xx یا 5xx سٹیٹس کوڈ)
-    //         if (!response.ok) {
-    //             throw new Error(`Server responded with status: ${response.status}`);
-    //         }
+            // 2. نیٹ ورک ایرر ہینڈل کریں (4xx یا 5xx سٹیٹس کوڈ)
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
 
-    //         // 3. JSON Error ہینڈل کریں (204 No Content یا خالی رسپانس)
-    //         const contentType = response.headers.get("content-type");
-    //         const isJson = contentType && contentType.includes("application/json");
+            // 3. JSON Error ہینڈل کریں (204 No Content یا خالی رسپانس)
+            const contentType = response.headers.get("content-type");
+            const isJson = contentType && contentType.includes("application/json");
 
-    //         if (response.status === 204 || (response.status === 200 && !isJson)) {
-    //             hideTyping();
-    //             // اگر n8n فوری رسپانس بھیج رہا ہے تو یہ پیغام دکھائیں
-    //             addChatMessage("آپ کا سوال موصول ہو گیا ہے اور اس پر کام جاری ہے۔", false);
-    //             return; // فنکشن یہیں ختم کر دیں
-    //         }
+            if (response.status === 204 || (response.status === 200 && !isJson)) {
+                hideTyping();
+                // اگر n8n فوری رسپانس بھیج رہا ہے تو یہ پیغام دکھائیں
+                addChatMessage("آپ کا سوال موصول ہو گیا ہے اور اس پر کام جاری ہے۔", false);
+                return; // فنکشن یہیں ختم کر دیں
+            }
 
-    //         // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
-    //         const data = await response.json();
-    //         console.log("N8N Response:", data); 
-    //         hideTyping();
+            // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
+            const data = await response.json();
+            hideTyping();
 
-    //         // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
-    //         const botReply = data.reply ||data.response || data.text || data.message || data.output ||data|| 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
-    //         addChatMessage(botReply, false);
+            // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
+            const botReply = data.reply ||json.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+            addChatMessage(botReply, false);
 
-    //     } catch (error) {
-    //         hideTyping();
-    //         // عام ایرر میسج دکھائیں، لیکن console میں تفصیل دیں۔
-    //         addChatMessage('سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔', false);
-    //         console.error('Error in sendChatMessage:', error);
-    //     } finally {
-    //         sendBtn.disabled = false;
-    //         chatInput.focus();
-    //     }
-    // }try {
-    // 1. Request bhejna
-    const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: "Hi" })
-    });
-
-    // 2. HTTP error handle (4xx / 5xx)
-    if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-    }
-
-    // 3. Content-Type check
-    const contentType = response.headers.get("content-type") || "";
-
-    // Agar JSON nahi hai ya empty response hai
-    if (response.status === 204 || !contentType.includes("application/json")) {
-        hideTyping();
-        addChatMessage(
-            "آپ کا سوال موصول ہو گیا ہے اور اس پر کام جاری ہے۔",
-            false
-        );
-        return;
-    }
-
-    // 4. JSON safely read
-    const data = await response.json();
-    console.log("N8N Response:", data);
-    hideTyping();
-
-    // 5. BOT REPLY — ONLY STRING ALLOWED
-    let botReply = '';
-
-    if (typeof data.reply === 'string') {
-        botReply = data.reply;
-    } else if (typeof data.response === 'string') {
-        botReply = data.response;
-    } else if (typeof data.text === 'string') {
-        botReply = data.text;
-    } else if (typeof data.message === 'string') {
-        botReply = data.message;
-    } else {
-        botReply = 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
-    }
-
-    addChatMessage(botReply, false);
-
-} catch (error) {
-    hideTyping();
-    addChatMessage(
-        'سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔',
-        false
-    );
-    console.error('Error in sendChatMessage:', error);
-} finally {
-    sendBtn.disabled = false;
-    chatInput.focus();
-}
-        
-  sendChatMessage.toString()
- // <--- یہاں `sendChatMessage` فنکشن صحیح طور پر بند ہو رہا ہے۔
+        } catch (error) {
+            hideTyping();
+            // عام ایرر میسج دکھائیں، لیکن console میں تفصیل دیں۔
+            addChatMessage('سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔', false);
+            console.error('Error in sendChatMessage:', error);
+        } finally {
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+    } // <--- یہاں `sendChatMessage` فنکشن صحیح طور پر بند ہو رہا ہے۔
 
     sendBtn.addEventListener('click', sendChatMessage);
 
