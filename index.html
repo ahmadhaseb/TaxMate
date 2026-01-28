@@ -1,135 +1,842 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>TaxMate Chatbot</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
-    }
-    #chat {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      max-width: 500px;
-      margin: auto;
-    }
-    .msg {
-      margin: 8px 0;
-    }
-    .user { font-weight: bold; }
-    .bot { color: green; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pakistan Tax Help Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Navigation Styles */
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: #ffd700;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ffd700;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            transition: 0.3s;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .cta-button {
+            background: white;
+            color: #667eea;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #1e3c72;
+            position: relative;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* About Section */
+        #about {
+            background: #f8f9fa;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #555;
+            line-height: 2;
+        }
+
+        /* Chatbot Section */
+        #chatbot {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .chatbot-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chatbot-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .chatbot-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .chat-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .chat-message.bot .chat-avatar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .chat-message.user .chat-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .chat-message.bot .chat-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chat-message.user .chat-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .typing-dots {
+            display: none;
+            padding: 12px 18px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+            border: 1px solid #e0e0e0;
+        }
+
+        .typing-dots.active {
+            display: block;
+        }
+
+        .typing-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            margin: 0 2px;
+            animation: dotPulse 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotPulse {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chatbot-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chatbot-input input:focus {
+            border-color: #1e3c72;
+        }
+
+        .chatbot-input button {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .chatbot-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .chatbot-input button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .welcome-msg {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Contact Section */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+
+            nav {
+                display: none;
+                width: 100%;
+                order: 3;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+                padding-top: 1rem;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>🇵🇰 Pakistan Tax Help Portal</h1>
+            </div>
+            <div class="mobile-menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#chatbot">Chatbot</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<div id="chat">
-  <div id="messages"></div>
-  <input id="input" placeholder="Type message..." />
-  <button id="send">Send</button>
-</div>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <h2>Your Complete Tax Filing Companion</h2>
+        <p>Get instant guidance on FBR services, NTN registration, tax return filing, and more. Making tax compliance simple and accessible for every Pakistani citizen.</p>
+        <a href="#chatbot" class="cta-button">Start Chat Now</a>
+    </section>
 
-<!-- <script>
-const WEBHOOK_URL = "https://shiningstarplay321.app.n8n.cloud/webhook-test/15de7ef6-275e-42bf-a570-81067e2bb0f7";
+    <!-- Services Section -->
+    <section id="services">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">📝</div>
+                <h3>NTN Registration Help</h3>
+                <p>Step-by-step guidance for registering your National Tax Number (NTN) with FBR. We simplify the entire registration process for individuals and businesses.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Tax Return Filing Guidance</h3>
+                <p>Complete assistance with filing your annual and monthly tax returns. Learn about different tax forms, deadlines, and requirements for various income sources.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🏛️</div>
+                <h3>FBR Portal Assistance</h3>
+                <p>Navigate the FBR IRIS portal with confidence. Get help with registration, document uploads, payment processing, and tracking your tax submissions.</p>
+            </div>
+        </div>
+    </section>
 
-const messages = document.getElementById("messages");
-const input = document.getElementById("input");
-const sendBtn = document.getElementById("send");
+    <!-- About Section -->
+    <section id="about">
+        <h2>About Us</h2>
+        <div class="about-content">
+            <p>Pakistan Tax Help Portal is dedicated to empowering Pakistani citizens with the knowledge and tools needed to navigate the complex world of taxation. Our mission is to make tax compliance accessible, understandable, and stress-free for everyone.</p>
+            <p>Through our AI-powered chatbot and comprehensive resources, we provide instant answers to your tax-related questions, helping you understand FBR regulations, complete your NTN registration, file returns accurately, and stay compliant with Pakistani tax laws.</p>
+            <p>Whether you're a first-time filer or an experienced taxpayer, we're here to guide you every step of the way.</p>
+        </div>
+    </section>
 
-function addMessage(text, cls) {
-  const div = document.createElement("div");
-  div.className = "msg " + cls;
-  div.textContent = text;
-  messages.appendChild(div);
-}
+    <!-- Chatbot Section -->
+    <section id="chatbot">
+        <h2>Ask Our Tax Assistant</h2>
+        <div class="chatbot-container">
+            <div class="chatbot-header">
+                <h3>💬 Tax Help Chatbot</h3>
+                <p>Get instant answers to your tax questions</p>
+            </div>
+            <div class="chatbot-messages" id="chatMessages">
+                <div class="welcome-msg">
+                    Welcome! Ask me anything about FBR, NTN registration, tax returns, or any tax-related query.
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatInput" placeholder="Type your question here..." autocomplete="off">
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
+    </section>
 
-sendBtn.onclick = async () => {
-  const text = input.value.trim();
-  if (!text) return;
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <form class="contact-form" id="contactForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+    </section>
 
-  addMessage("You: " + text, "user");
-  input.value = "";
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Pakistan Tax Help Portal. All rights reserved.</p>
+        <p>Empowering citizens with tax knowledge and compliance support.</p>
+    </footer>
 
-  try {
-    const res = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ query: text })
-    });
-
-    // 🔴 IMPORTANT FIX
-    const rawText = await res.text();
-    console.log("RAW RESPONSE:", rawText);
-
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (e) {
-      addMessage("Bot: Invalid JSON from backend", "bot");
-      return;
+    <script>
+    // Mobile Menu Toggle
+    function toggleMenu() {
+        const nav = document.getElementById('mainNav');
+        nav.classList.toggle('active');
     }
 
-    const reply = data.reply ?? "جواب دستیاب نہیں";
-    addMessage("Bot: " + reply, "bot");
-
-  } catch (err) {
-    console.error(err);
-    addMessage("Bot: Server error", "bot");
-  }
-};
-</script> -->
- <script>
-const WEBHOOK_URL = "https://shiningstarplay321.app.n8n.cloud/webhook-test/15de7ef6-275e-42bf-a570-81067e2bb0f7";
-
-function addMessage(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  document.body.appendChild(div);
-}
-
-async function sendMessage() {
-  try {
-    const res = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ query: "hi" })
+    // Smooth Scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                // Close mobile menu if open
+                document.getElementById('mainNav').classList.remove('active');
+            }
+        });
     });
+        console.log("🔥 NEW VERSION LOADED");
+    // Chatbot Functionality
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
 
-    const rawText = await res.text();
-    console.log("RAW RESPONSE:", rawText);
+    // Webhook URL (آپ نے جو ngrok URL استعمال کیا ہے)
+    // نوٹ: اگر آپ نے پروڈکشن URL لگایا ہے تو اسے یہاں اپ ڈیٹ کریں
+    const WEBHOOK_URL = 'https://shiningstarplay321.app.n8n.cloud/webhook/15de7ef6-275e-42bf-a570-81067e2bb0f7';
 
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch (e) {
-      alert("Invalid JSON from backend");
-      return;
+    function addChatMessage(text, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'chat-avatar';
+        avatar.textContent = isUser ? '👤' : '🤖';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        bubble.textContent = text;
+
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(bubble);
+        chatMessages.appendChild(messageDiv);
+
+        scrollChatToBottom();
     }
 
-    const reply =
-      data && typeof data.reply === "string"
-        ? data.reply
-        : "جواب دستیاب نہیں";
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'chat-message bot';
+        typingDiv.id = 'typingIndicator';
 
-    addMessage("Bot: " + reply);
+        const avatar = document.createElement('div');
+        avatar.className = 'chat-avatar';
+        avatar.textContent = '🤖';
 
-  } catch (err) {
-    console.error(err);
-    alert("FETCH FAILED:\n" + err.message);
-  }
-}
+        const dots = document.createElement('div');
+        dots.className = 'typing-dots active';
+        dots.innerHTML = '<span></span><span></span><span></span>';
 
-// auto run for test
-sendMessage();
+        typingDiv.appendChild(avatar);
+        typingDiv.appendChild(dots);
+        chatMessages.appendChild(typingDiv);
+
+        scrollChatToBottom();
+    }
+
+    function hideTyping() {
+        const typingDiv = document.getElementById('typingIndicator');
+        if (typingDiv) {
+            typingDiv.remove();
+        }
+    }
+
+    function scrollChatToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendChatMessage() {
+        const message = chatInput.value.trim();
+
+        if (!message) return;
+
+        addChatMessage(message, true);
+        chatInput.value = '';
+        sendBtn.disabled = true;
+
+        showTyping();
+
+        try {
+            // 1. ریکوئسٹ بھیجیں
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query:message })
+            });
+
+            // 2. نیٹ ورک ایرر ہینڈل کریں (4xx یا 5xx سٹیٹس کوڈ)
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
+
+            // 3. JSON Error ہینڈل کریں (204 No Content یا خالی رسپانس)
+            const contentType = response.headers.get("content-type");
+            const isJson = contentType && contentType.includes("application/json");
+
+            if (response.status === 204 || (response.status === 200 && !isJson)) {
+                hideTyping();
+                // اگر n8n فوری رسپانس بھیج رہا ہے تو یہ پیغام دکھائیں
+                addChatMessage("آپ کا سوال موصول ہو گیا ہے اور اس پر کام جاری ہے۔", false);
+                return; // فنکشن یہیں ختم کر دیں
+            }
+
+            // 4. رسپانس کو JSON کے طور پر پڑھیں (صرف تب جب مواد موجود ہو)
+            const data = await response.json();
+            hideTyping();
+
+            // 5. جواب کو ڈسپلے کریں (مختلف ممکنہ keys کو چیک کرتے ہوئے)
+            const botReply = data.reply ||data.response || data.text || data.message || data.output || 'Sorry, میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+            addChatMessage(botReply, false);
+
+        } catch (error) {
+            hideTyping();
+            // عام ایرر میسج دکھائیں، لیکن console میں تفصیل دیں۔
+            addChatMessage('سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔', false);
+            console.error('Error in sendChatMessage:', error);
+        } finally {
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+    }
+  sendChatMessage.toString()
+ // <--- یہاں `sendChatMessage` فنکشن صحیح طور پر بند ہو رہا ہے۔
+
+    sendBtn.addEventListener('click', sendChatMessage);
+
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    });
+
+    // Contact Form Handling
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+
+        // Here you can add your form submission logic
+        alert(`Thank you ${name}! Your message has been received. We'll get back to you at ${email} soon.`);
+        this.reset();
+    });
+
+    // Header scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll > lastScroll && currentScroll > 100) {
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            header.style.transform = 'translateY(0)';
+        }
+
+        lastScroll = currentScroll;
+    });
 </script>
-
-
-
 </body>
 </html>
