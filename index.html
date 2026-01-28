@@ -839,8 +839,8 @@
 
         hideTyping();
 
-    // Agar response bilkul empty hai
-        if (!rawText) {
+    // Agar response bilkul empty hai    //(!rawText)   before function
+        if (!rawText || rawText.trim() === "") {
             addChatMessage(
             'سرور نے خالی جواب بھیجا ہے۔ براہ کرم دوبارہ کوشش کریں۔',
             false
@@ -851,6 +851,8 @@
         let data;
         try {
             data = JSON.parse(rawText);
+            // اگر n8n جواب کو Array میں بھیجے
+            if (Array.isArray(data)) data = data[0];
         } catch (e) {
             addChatMessage(
             'غلط فارمیٹ میں جواب موصول ہوا ہے۔',
