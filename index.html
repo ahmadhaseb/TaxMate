@@ -729,55 +729,55 @@
     // نوٹ: اگر آپ نے پروڈکشن URL لگایا ہے تو اسے یہاں اپ ڈیٹ کریں
     const WEBHOOK_URL = 'https://shiningstarplay321.app.n8n.cloud/webhook/fcfeee50-f112-474c-9176-ff392d93a8a6';
 
-    // function addChatMessage(text, isUser) {
-    //     const messageDiv = document.createElement('div');
-    //     messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
+    function addChatMessage(text, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
 
-    //     const avatar = document.createElement('div');
-    //     avatar.className = 'chat-avatar';
-    //     avatar.textContent = isUser ? '👤' : '🤖';
+        const avatar = document.createElement('div');
+        avatar.className = 'chat-avatar';
+        avatar.textContent = isUser ? '👤' : '🤖';
 
-    //     const bubble = document.createElement('div');
-    //     bubble.className = 'chat-bubble';
-    //     bubble.textContent = text;
-
-    //     messageDiv.appendChild(avatar);
-    //     messageDiv.appendChild(bubble);
-    //     chatMessages.appendChild(messageDiv);
-
-    //     scrollChatToBottom();
-    // }
-        // 1. میسج دکھانے والا فنکشن (Urdu & Formatting Support)
-function addChatMessage(text, isUser) {
-    const messageDiv = document.createElement('div');
-    
-    // چیک کریں کہ کیا ٹیکسٹ میں اردو حروف ہیں
-    const isUrdu = /[\u0600-\u06FF]/.test(text); 
-    messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'} ${isUrdu ? 'urdu-text' : ''}`;
-
-    const avatar = document.createElement('div');
-    avatar.className = 'chat-avatar';
-    avatar.textContent = isUser ? '👤' : '🤖';
-
-    const bubble = document.createElement('div');
-    bubble.className = 'chat-bubble';
-
-    if (isUser) {
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
         bubble.textContent = text;
-    } else {
-        // فارمیٹنگ: لائن بریکس اور بولڈ ٹیکسٹ
-        let formattedText = text
-            .replace(/\n/g, '<br>') 
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        bubble.innerHTML = formattedText;
+
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(bubble);
+        chatMessages.appendChild(messageDiv);
+
+        scrollChatToBottom();
     }
+//         // 1. میسج دکھانے والا فنکشن (Urdu & Formatting Support)
+// function addChatMessage(text, isUser) {
+//     const messageDiv = document.createElement('div');
+    
+//     // چیک کریں کہ کیا ٹیکسٹ میں اردو حروف ہیں
+//     const isUrdu = /[\u0600-\u06FF]/.test(text); 
+//     messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'} ${isUrdu ? 'urdu-text' : ''}`;
 
-    messageDiv.appendChild(avatar);
-    messageDiv.appendChild(bubble);
-    chatMessages.appendChild(messageDiv);
+//     const avatar = document.createElement('div');
+//     avatar.className = 'chat-avatar';
+//     avatar.textContent = isUser ? '👤' : '🤖';
 
-    scrollChatToBottom();
-}
+//     const bubble = document.createElement('div');
+//     bubble.className = 'chat-bubble';
+
+//     if (isUser) {
+//         bubble.textContent = text;
+//     } else {
+//         // فارمیٹنگ: لائن بریکس اور بولڈ ٹیکسٹ
+//         let formattedText = text
+//             .replace(/\n/g, '<br>') 
+//             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+//         bubble.innerHTML = formattedText;
+//     }
+
+//     messageDiv.appendChild(avatar);
+//     messageDiv.appendChild(bubble);
+//     chatMessages.appendChild(messageDiv);
+
+//     scrollChatToBottom();
+// }
 
     function showTyping() {
         const typingDiv = document.createElement('div');
