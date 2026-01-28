@@ -92,6 +92,10 @@ async function test() {
         body: JSON.stringify({ query: "hi" })
       }
     );
+    console.log("RAW DATA:", data);
+    console.log("TYPE OF REPLY:", typeof data.reply);
+    alert(JSON.stringify(data, null, 2));
+
 
     const text = await res.text();
     alert("RAW RESPONSE:\n" + text);
