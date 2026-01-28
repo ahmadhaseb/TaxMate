@@ -82,31 +82,53 @@ sendBtn.onclick = async () => {
   }
 };
 </script> -->
-  <script>
-async function test() {
+ <script>
+const WEBHOOK_URL = "https://shiningstarplay321.app.n8n.cloud/webhook-test/15de7ef6-275e-42bf-a570-81067e2bb0f7";
+
+function addMessage(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  document.body.appendChild(div);
+}
+
+async function sendMessage() {
   try {
-    const res = await fetch("https://shiningstarplay321.app.n8n.cloud/webhook-test/15de7ef6-275e-42bf-a570-81067e2bb0f7",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: "hi" })
-      }
-    );
-    console.log("RAW DATA:", data);
-    console.log("TYPE OF REPLY:", typeof data.reply);
-    alert(JSON.stringify(data, null, 2));
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ query: "hi" })
+    });
 
+    const rawText = await res.text();
+    console.log("RAW RESPONSE:", rawText);
 
-    const text = await res.text();
-    alert("RAW RESPONSE:\n" + text);
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      alert("Invalid JSON from backend");
+      return;
+    }
 
-  } catch (e) {
-    alert("FETCH FAILED:\n" + e.message);
+    const reply =
+      data && typeof data.reply === "string"
+        ? data.reply
+        : "جواب دستیاب نہیں";
+
+    addMessage("Bot: " + reply);
+
+  } catch (err) {
+    console.error(err);
+    alert("FETCH FAILED:\n" + err.message);
   }
 }
 
-test();
+// auto run for test
+sendMessage();
 </script>
+
 
 
 </body>
