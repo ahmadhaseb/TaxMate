@@ -755,43 +755,63 @@
         sendBtn.disabled = true;
 
         showTyping();
-        try
-        {
-            // 1. Request bhejna
+       try {
         const response = await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: message })
+        },
+        body: JSON.stringify({ query: message })
         });
-             // 2. HTTP error handle
+
         if (!response.ok) {
-            throw new Error(`Server responded with status: ${response.status}`);
+        throw new Error(`Server responded with status: ${response.status}`);
         }
-            // 3. Response ko JSON ke taur par read karo
-        const data = await response.json();
-        console.log("N8N Response:", data);
+
+    // 🔑 SAFE RESPONSE HANDLING
+        const rawText = await response.text();
+        console.log("RAW RESPONSE:", rawText);
+
         hideTyping();
 
-        // 4. Bot reply — sirf STRING allow
+    // Agar response bilkul empty hai
+        if (!rawText) {
+            addChatMessage(
+            'سرور نے خالی جواب بھیجا ہے۔ براہ کرم دوبارہ کوشش کریں۔',
+            false
+            );
+            return;
+        }
+
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            addChatMessage(
+            'غلط فارمیٹ میں جواب موصول ہوا ہے۔',
+            false
+            );
+            return;
+        }
+
+    // ✅ Sirf STRING reply allow
         let botReply = '';
 
         if (typeof data.reply === 'string') {
-        botReply = data.reply.trim();
+            botReply = data.reply.trim();
         } else if (typeof data.response === 'string') {
-        botReply = data.response.trim();
+            botReply = data.response.trim();
         } else if (typeof data.text === 'string') {
-        botReply = data.text.trim();
+            botReply = data.text.trim();
         } else if (typeof data.message === 'string') {
-        botReply = data.message.trim();
+            botReply = data.message.trim();
         } else {
-        botReply = 'Sorry، میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+            botReply = 'Sorry، میں جواب نہیں دے سکا۔ براہ کرم دوبارہ کوشش کریں۔';
         }
-    
+
         addChatMessage(botReply, false);
 
-     } catch (error) {
+    } catch (error) {
         hideTyping();
         addChatMessage(
         'سروس سے رابطہ کرنے میں مسئلہ درپیش ہے۔ براہ کرم کنکشن چیک کر کے دوبارہ کوشش کریں۔',
@@ -802,6 +822,7 @@
         sendBtn.disabled = false;
         chatInput.focus();
     }
+
         
         // try {
         //     // 1. ریکوئسٹ بھیجیں
