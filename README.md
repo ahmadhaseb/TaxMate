@@ -10,7 +10,7 @@ and a secure n8n backend for AI processing.
 ---
 
 ## 🚀 Live Demo
-https://ahmadhaseb.github.io/
+https://ahmadhaseb.github.io/TaxMate/
 
 ---
 
@@ -31,11 +31,3 @@ https://ahmadhaseb.github.io/
 - ❌ No API keys are stored in the frontend
 - ✅ All API keys are securely stored in n8n credentials
 - Frontend only communicates via a webhook URL
-
-### Webhook Configuration
-Webhook URL is stored in a separate `config.js` file:
-
-```js
-window.APP_CONFIG = {
-  WEBHOOK_URL: "https://<your-n8n-domain>/webhook/..."
-};
