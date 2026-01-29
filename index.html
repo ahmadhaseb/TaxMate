@@ -21,11 +21,27 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         /* اردو کے لیے خاص سیٹنگز */
-.urdu-text {
-    direction: rtl !important;
-    text-align: right !important;
-    font-family: 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
-    line-height: 2; /* اردو کے لیے لائنوں میں وقفہ زیادہ اچھا لگتا ہے */
+    .urdu-text {
+        direction: rtl !important;
+        text-align: right !important;
+        font-family: 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
+        line-height: 2; /* اردو کے لیے لائنوں میں وقفہ زیادہ اچھا لگتا ہے */
+    }
+    .bot-msg {
+    background: #f5f7fa;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 8px 0;
+    line-height: 1.6;
+    white-space: pre-line;
+ }
+
+ .user-msg {
+    background: #dbeafe;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 8px 0;
+    text-align: right;
 }
 
 .chat-bubble {
@@ -750,9 +766,16 @@
         // 1. میسج دکھانے والا فنکشن (Urdu & Formatting Support)
     function addChatMessage(text, isUser) {
         const messageDiv = document.createElement('div');
-    
+          msg.className = isUser ? "user-msg" : "bot-msg";
+         // 🔥 AUTO DIRECTION FIX
+        const isUrdu = /[\u0600-\u06FF]/.test(text);
+
+        msg.dir = isUrdu ? "rtl" : "ltr";
+        msg.lang = isUrdu ? "ur" : "en";
+        msg.textContent = text;
+
         // چیک کریں کہ کیا ٹیکسٹ میں اردو حروف ہیں
-        const isUrdu = /[\u0600-\u06FF]/.test(text); 
+        //const isUrdu = /[\u0600-\u06FF]/.test(text); 
         messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'} ${isUrdu ? 'urdu-text' : ''}`;
 
         const avatar = document.createElement('div');
@@ -771,7 +794,8 @@
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             bubble.innerHTML = formattedText;
         }
-
+         chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight;
         messageDiv.appendChild(avatar);
         messageDiv.appendChild(bubble);
         chatMessages.appendChild(messageDiv);
