@@ -1,0 +1,41 @@
+# 🇵🇰 TaxMate – Pakistani Tax Assistant Chatbot
+
+TaxMate is a web-based AI chatbot that helps users understand
+Pakistani tax-related queries such as FBR registration, NTN,
+tax notices, salary tax, and general guidance.
+
+This project uses a frontend hosted on GitHub Pages
+and a secure n8n backend for AI processing.
+
+---
+
+## 🚀 Live Demo
+https://ahmadhaseb.github.io/
+
+---
+
+## 🧠 How It Works
+
+- Frontend (HTML/CSS/JS) collects user queries
+- Queries are sent to an n8n webhook
+- n8n handles:
+  - AI logic (Gemini)
+  - Language handling (Urdu / English)
+  - RAG (Supabase vector search)
+- Response is returned to frontend securely
+
+---
+
+## 🔐 Security & Environment Variables
+
+- ❌ No API keys are stored in the frontend
+- ✅ All API keys are securely stored in n8n credentials
+- Frontend only communicates via a webhook URL
+
+### Webhook Configuration
+Webhook URL is stored in a separate `config.js` file:
+
+```js
+window.APP_CONFIG = {
+  WEBHOOK_URL: "https://<your-n8n-domain>/webhook/..."
+};
