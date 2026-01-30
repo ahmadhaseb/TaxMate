@@ -20,7 +20,7 @@ https://ahmadhaseb.github.io/TaxMate/
 - Queries are sent to an n8n webhook
 - n8n handles:
   - AI logic (Gemini)
-  - Language handling (Urdu / English)
+  - Language handling (Urdu)
   - RAG (Supabase vector search)
 - Response is returned to frontend securely
 
