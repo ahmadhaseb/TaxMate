@@ -31,3 +31,8 @@ https://ahmadhaseb.github.io/TaxMate/
 - ❌ No API keys are stored in the frontend
 - ✅ All API keys are securely stored in n8n credentials
 - Frontend only communicates via a webhook URL
+  
+
+https://github.com/user-attachments/assets/f7aba869-e465-43a9-addc-0ea2418dd3e5
+
+
