@@ -8,7 +8,7 @@
 [Explore TaxMate Live](https://ahmadhaseb.github.io/TaxMate/)
 
 ---
-
+   
 ## 🎬 Project Demo & Technical Walkthrough
 
 Below is a detailed demonstration of how TaxMate processes queries and utilizes its knowledge base:
