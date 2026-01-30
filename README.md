@@ -30,7 +30,7 @@ The project is built on a robust **RAG (Retrieval-Augmented Generation)** archit
 
 1.  **Frontend:** A clean HTML/CSS/JS interface hosted on **GitHub Pages**.
 2.  **Orchestration:** **n8n** serves as the backend engine, managing the flow between the user and the AI.
-3.  **AI Brain:** **Google Gemini 1.5 Flash** generates responses based on retrieved context.
+3.  **AI Brain:** **Google Gemini 2.5 Flash** generates responses based on retrieved context.
 4.  **Knowledge Base:** Official documents like the **Income Tax Ordinance 2001** and **Finance Act 2024-25** are indexed in **Supabase** using **Gemini Embeddings**.
 5.  **Memory:** Integrated **n8n Window Buffer Memory** to maintain conversation context.
 
@@ -46,7 +46,7 @@ The project is built on a robust **RAG (Retrieval-Augmented Generation)** archit
 ## 🛠️ Tech Stack
 
 * **Automation:** n8n
-* **AI Model:** Google Gemini 1.5 Flash
+* **AI Model:** Google Gemini 2.5 Flash
 * **Vector Database:** Supabase
 * **Embeddings:** Google Gemini Embeddings
 * **Hosting:** GitHub Pages
