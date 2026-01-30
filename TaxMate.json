@@ -1,0 +1,698 @@
+{
+  "name": "TaxMate",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.sessionId || $json.body.query }}"
+      },
+      "id": "58cd68aa-68b7-4b0f-a1cc-7e61faa1af8f",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1504,
+        2736
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "94735b83-414c-4e24-abe7-ae64d5e51617",
+      "name": "Google Gemini Embeddings (Chat)",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        2944
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MiFMruDhvgzwsFfz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFile",
+        "fileToWatch": {
+          "__rl": true,
+          "value": "1X4HSol7D1L1QbyZOzntokx_GlhpGpkmb",
+          "mode": "id"
+        }
+      },
+      "id": "edaa576b-0c1c-488b-88b7-af076f4e8898",
+      "name": "Google Drive Monitor",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        3248
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zlf1zYMXtlPHl7Si",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "11744c94-607f-44d9-a243-5c9293621013",
+      "name": "Download File from Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1760,
+        3248
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Zlf1zYMXtlPHl7Si",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "id": "dd1614d7-75d4-4106-b08c-2244bdb76052",
+      "name": "Supabase Vector Store (Insert)",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2016,
+        3248
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ci51eqHKSPMkM48y",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 100,
+        "options": {}
+      },
+      "id": "9bb720c8-abba-4129-baf9-803bacff719f",
+      "name": "Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        3680
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "f00e8d17-6870-4bc3-99b0-0be3f8a1fc37",
+      "name": "Google Gemini Embeddings (Indexing)",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        3472
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MiFMruDhvgzwsFfz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.query }}",
+        "options": {
+          "systemMessage": "You are a professional Pakistani Tax Consultant AI, powered by RAG (Retrieval-Augmented Generation). You rely primarily on retrieved documents from the knowledge base (FBR laws, Finance Acts, IRIS guides, and official FAQs). If retrieved documents are available, they always take precedence over general knowledge.\n\n### STRICT LANGUAGE RULES:\n- ALWAYS respond ONLY in Urdu Script (اردو رسم الخط). \n- Regardless of the user's input language (English, Roman Urdu, or Urdu), your output must be in Urdu Script.\n- Do NOT ask for language preference.\n- Do NOT use Roman Urdu.\n\n### CORE CONSTRAINTS:\n- Do NOT greet the user (No Salam/Hello).\n- Do NOT ask about language.\n- Only answer tax-related questions.\n- If no relevant document is retrieved, say: \"اس سوال کا جواب جنرل معلومات پر مبنی ہے، آفیشل FBR اپ ڈیٹ چیک کرنا ضروری ہے۔\"\n- Never guess tax rates or legal rules. Mention tax year whenever applicable.\n- Warn users that tax laws may change after Finance Act updates.\n\n### EXPERTISE & SCOPE:\n- FBR Pakistan tax laws, Income Tax Ordinance 2001, Sales Tax Act.\n- ATL/Non-ATL, IRIS portal steps, NTN registration, and Filing (Salary, Business, etc.).\n- Withholding taxes, penalties, and tax slabs.\n\n### RESPONSE STRUCTURE:\n1. Short clear answer in Urdu.\n2. Step-by-step explanation.\n3. Practical action (what to do next).\n4. Important warning or note.\n\n### INTERACTION:\n- Ask clarifying questions if income type, amount, or filer status is unclear.\n- Encourage tax compliance and explain consequences for Non-Filers clearly."
+        }
+      },
+      "id": "d1aa700b-c3c4-4572-a190-37aa1a46f7aa",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1536,
+        2512
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3792a43e-b1b0-4b2b-920c-53823cd91016",
+              "leftValue": "={{ $json.mimeType }}",
+              "rightValue": "application/pdf",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1536,
+        3248
+      ],
+      "id": "2027aa2b-65f8-4847-a46a-7ce200d43b82",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fcfeee50-f112-474c-9176-ff392d93a8a6",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c8946ef2-1194-4db9-a2e8-460360dcd0b8",
+      "name": "Webhook for Web Chatbot",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        992,
+        2832
+      ],
+      "webhookId": "fcfeee50-f112-474c-9176-ff392d93a8a6"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          },
+          "responseKey": "={{ $json.output }}",
+          "enableStreaming": true
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2560,
+        2720
+      ],
+      "id": "321dbb36-2979-4982-ad67-2403afe6271e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "id": "3cc5570f-85bb-40af-a695-413f16f92413",
+      "name": "Document Loader1",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2112,
+        3472
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "calculation_details",
+              "value": "={{ $json.calculation_details || 'No calculation performed' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "tax_year",
+              "value": "={{ $json.tax_year || '2024-2025' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a628ac44-4ea3-4c56-83ca-d0a1a3b0284d",
+      "name": "Format Tax Calculation Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2128,
+        2720
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "cd54dcda-620e-4e81-8383-74cee8a9d355",
+      "name": "Google_Gemini_Chat_Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        2832
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MiFMruDhvgzwsFfz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrieve relevant Pakistani tax laws, FBR regulations, and tax guidance from the knowledge base",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "topK": 3,
+        "options": {}
+      },
+      "id": "9f790057-b0c7-4b72-b715-1b994304ba77",
+      "name": "Supabase_Vector_Store_(Retrieval)",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1632,
+        2736
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ci51eqHKSPMkM48y",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7a8dd0f-fad1-4d39-a06b-9d905a5b2b62",
+              "name": "reply",
+              "value": "={{ $json.response }}{{ $json.tax_year }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2336,
+        2720
+      ],
+      "id": "f6ebac70-b34f-4662-85fa-7710613d5866",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "id": "2291ac88-0ad6-4a0c-8833-5f743fa474fd",
+      "name": "TaxCalculatorTool",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        2736
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## User Interaction Layer\n\n",
+        "height": 256,
+        "width": 368,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        2752
+      ],
+      "id": "78c1c321-0ace-4d0a-bf39-9fd2e2ad1fdd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## AI Processing & Memory",
+        "height": 672,
+        "width": 784
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        2432
+      ],
+      "id": "36d7758b-c89c-49ba-a27c-a37ca2d4ddb0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## End Result Processing",
+        "height": 304,
+        "width": 672,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        2640
+      ],
+      "id": "a43dce42-0efb-49a0-8951-037fd5b94479",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n## FBR Knowledge Base (RAG)\n## Primary Documents\n### *Income Tax Ordinance 2001\n### *Finance Act 2024-25\n### *FBR IRIS Guides\n### *Sales Tax Act",
+        "height": 656,
+        "width": 1136,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        3200
+      ],
+      "id": "f224ac1f-aeec-4cbc-b5ea-879c38a34442",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Webhook for Web Chatbot": [
+      {
+        "json": {
+          "headers": {
+            "host": "shiningstarplay321.app.n8n.cloud",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+            "content-length": "118",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "accept-language": "en-GB,en;q=0.9",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "39.61.52.196",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "PK",
+            "cf-ray": "9c619be4b00655ec-SIN",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "origin": "https://ahmadhaseb.github.io",
+            "priority": "u=1, i",
+            "referer": "https://ahmadhaseb.github.io/",
+            "sec-ch-ua": "\"Not(A:Brand\";v=\"8\", \"Chromium\";v=\"144\", \"Google Chrome\";v=\"144\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "x-forwarded-for": "39.61.52.196, 172.69.176.96",
+            "x-forwarded-host": "shiningstarplay321.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-108-67dcdbdbcd-n8szl",
+            "x-is-trusted": "yes",
+            "x-real-ip": "39.61.52.196"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "query": "2025-2026 sal hai or mai non filer hon or meri salary 100000 hai mai is ka tax calculate krwana chahta hon"
+          },
+          "webhookUrl": "https://shiningstarplay321.app.n8n.cloud/webhook/fcfeee50-f112-474c-9176-ff392d93a8a6",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings (Chat)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase_Vector_Store_(Retrieval)",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Monitor": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File from Drive": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store (Insert)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Document Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings (Indexing)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store (Insert)",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download File from Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook for Web Chatbot": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Tax Calculation Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store (Insert)",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Tax Calculation Results": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Gemini_Chat_Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase_Vector_Store_(Retrieval)": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TaxCalculatorTool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "availableInMCP": false
+  },
+  "versionId": "f2451a22-bab9-4d42-89fd-481834d5c852",
+  "meta": {
+    "instanceId": "7100a42007357f7e6af6307dd34bec19ce5ea2edfdda324f4a287e1023cd1ae3"
+  },
+  "id": "XgDIRexBvIJ1PTEF",
+  "tags": []
+}
