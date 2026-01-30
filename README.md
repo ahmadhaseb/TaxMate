@@ -8,12 +8,15 @@
 [Explore TaxMate Live](https://ahmadhaseb.github.io/TaxMate/)
 
 ---
+
+https://github.com/user-attachments/assets/865a8e9b-33e8-4d22-833d-17b3d47826ca
+
+
    
 ## 🎬 Project Demo & Technical Walkthrough
 
 Below is a detailed demonstration of how TaxMate processes queries and utilizes its knowledge base:
 
-https://github.com/user-attachments/assets/f7aba869-e465-43a9-addc-0ea2418dd3e5
 
 **Key features shown in the demo:**
 * **Automated Tax Logic:** Real-time processing via n8n webhooks.
