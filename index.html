@@ -44,20 +44,15 @@
     text-align: right;
 }
 
-/* .chat-bubble {
+.chat-bubble {
     word-wrap: break-word;
     max-width: 80%;
     padding: 10px 15px;
     border-radius: 15px;
     margin: 5px;
     display: inline-block;
-} */
-.chat-bubble {
-    unicode-bidi: isolate;
-    text-align: start;
-    line-height: 1.7;
-    white-space: pre-wrap;
 }
+
 .chat-bubble strong {
     color: #000; /* بولڈ ٹیکسٹ کو نمایاں کرنے کے لیے */
 }
@@ -748,7 +743,7 @@
 
     // Webhook URL (آپ نے جو ngrok URL استعمال کیا ہے)
     // نوٹ: اگر آپ نے پروڈکشن URL لگایا ہے تو اسے یہاں اپ ڈیٹ کریں
-    const WEBHOOK_URL = "https://shiningstarplay321.app.n8n.cloud/webhook/fcfeee50-f112-474c-9176-ff392d93a8a6";
+    const WEBHOOK_URL = 'https://shiningstarplay321.app.n8n.cloud/webhook/fcfeee50-f112-474c-9176-ff392d93a8a6';
 
     // function addChatMessage(text, isUser) {
     //     const messageDiv = document.createElement('div');
@@ -809,41 +804,46 @@
     // }
     function addChatMessage(text, isUser) {
 
+    // 🔍 Detect Urdu / Arabic
     const isUrdu = /[\u0600-\u06FF]/.test(text);
 
+    // Main wrapper
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
 
+    // Avatar
     const avatar = document.createElement('div');
     avatar.className = 'chat-avatar';
     avatar.textContent = isUser ? '👤' : '🤖';
 
+    // Bubble
     const bubble = document.createElement('div');
     bubble.className = 'chat-bubble';
 
-    // 🔥 Direction fix
+    // 🔥 Direction & language FIX
     bubble.dir = isUrdu ? 'rtl' : 'ltr';
     bubble.lang = isUrdu ? 'ur' : 'en';
 
-    // 🔥 Unicode isolation to fix punctuation
-    const safeText = isUrdu
-        ? `\u202B${text}\u202C`   // RTL isolate
-        : `\u202A${text}\u202C`; // LTR isolate
-
+    // Content
     if (isUser) {
-        bubble.textContent = safeText;
+        bubble.textContent = text;
     } else {
-        bubble.innerHTML = safeText
+        const formattedText = text
             .replace(/\n/g, '<br>')
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        bubble.innerHTML = formattedText;
     }
 
+    // Append order
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(bubble);
     chatMessages.appendChild(messageDiv);
 
+    // Scroll
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+
 
     function showTyping() {
         const typingDiv = document.createElement('div');
